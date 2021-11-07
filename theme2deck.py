@@ -30,8 +30,9 @@ def load_model(name = "theme2deck.wordvectors", from_api = False):
     return model
 
 def get_card_sim(query, model):
+    query = str(query)
     query_df = cards.copy()
-    query_df['word_sim'] = [[(word,model.similarity(query, word))
+    query_df['word_sim'] = [[(word,model.similarity(query.lower(), word))
                              for word in card
                              if word in model
                             ] for card in query_df['split_name']]
