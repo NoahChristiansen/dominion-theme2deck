@@ -10,7 +10,7 @@ from gensim.models import KeyedVectors
 st.title("Dominion Themed Deck Finder")
 
 
-cards = pd.read_csv('./data/cleaned_cards.csv')
+cards = pd.read_csv('./data/supply_cards.csv')
 cards['split_name'] = cards['clean_name'].replace({'moneylender':'money lender banker',
                                                    'cutpurse':'cut purse thief',
                                                    'salvager':'salvage recover',
@@ -29,9 +29,10 @@ def load_model(name = "theme2deck.wordvectors", from_api = False):
             model = KeyedVectors.load(name)
     return model
 
-def get_card_sim(query, model):
+def get_card_sim(query, model, expansions):
     query = str(query)
-    query_df = cards.copy()
+    query_df = cards.loc[cards["expansion"].isin(expansions)].copy()
+    
     query_df['word_sim'] = [[(word,model.similarity(query.lower(), word))
                              for word in card
                              if word in model
@@ -55,10 +56,19 @@ def main():
     st.success("Model loaded!")
     
     user_input = st.text_input("Theme Idea:")
+    set_options = st.multiselect(
+        "Which sets would you like to include?",
+        ["Dominion", "Intrigue","Seaside","Alchemy", "Prosperity",
+         "Cornucopia","Hinterlands","Promotional Cards","Dark Ages", "Guilds",
+         'Adventures', "Empires", "Nocturne", "Renaissance", "Menagerie"],
+        ["Dominion", "Intrigue","Seaside","Alchemy", "Prosperity",
+         "Cornucopia","Hinterlands","Promotional Cards","Dark Ages", "Guilds",
+         'Adventures', "Empires", "Nocturne", "Renaissance", "Menagerie"]
+    )
     num_cards  = st.number_input("How many cards?",min_value = 5, value = 20)
 
     if user_input:
-        model_response = get_card_sim(user_input, model).head(num_cards)
+        model_response = get_card_sim(user_input, model, set_options).head(num_cards)
         
         images = [list(model_response['images'].values)[i:i+5] for i in range(0, len(model_response['images']), 5)]
         names  = [list(model_response['card_name'])[i:i+5] for i in range(0, len(model_response['card_name']), 5)]
