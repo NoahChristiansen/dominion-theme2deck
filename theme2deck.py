@@ -70,7 +70,7 @@ def main():
     if user_input:
         model_response = get_card_sim(user_input, model, set_options).head(num_cards)
         
-        images = [list(model_response['images'].values)[i:i+5] for i in range(0, len(model_response['images']), 5)]
+        images = [list(model_response['image_url'].values)[i:i+5] for i in range(0, len(model_response['image_url']), 5)]
         names  = [list(model_response['card_name'])[i:i+5] for i in range(0, len(model_response['card_name']), 5)]
         
         for i in range(len(images)):
