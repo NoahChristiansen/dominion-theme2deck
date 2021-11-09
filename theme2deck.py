@@ -71,13 +71,13 @@ def main():
         model_response = get_card_sim(user_input, model, set_options).head(num_cards)
         
         images = [list(model_response['image_url'].values)[i:i+5] for i in range(0, len(model_response['image_url']), 5)]
-        names  = [list(model_response['card_name'])[i:i+5] for i in range(0, len(model_response['card_name']), 5)]
+        names  = [list(model_response['name'])[i:i+5] for i in range(0, len(model_response['name']), 5)]
         
         for i in range(len(images)):
             st.image(images[i], width = 137, caption = names[i])
         
         st.subheader("Most Similar Cards:")
-        st.write(model_response[['card_name','set_name','type','cost','card_text','similarity']].head(num_cards))
+        st.write(model_response[['name','expansion','type','cost','text','similarity']].head(num_cards))
         
     st.write("Card data from: https://github.com/wesbuck/DominionCardAPI")
     st.write("Card images from: https://github.com/tempfillernamegithq/dominion-cards")
